@@ -38,7 +38,6 @@ class CategorieFixtures extends Fixture
         for ($index = 0; $index < count($categories); $index++) {
             $categorie = new Categorie();
             $categorie->setName($categories[$index]);
-            $categorie->setCreatedAt(new \DateTimeImmutable());
             $manager->persist($categorie);
         }
 
