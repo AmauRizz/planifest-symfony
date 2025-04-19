@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Image;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -54,6 +55,9 @@ class Event
     #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorieEntity = null;
 
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'eventEntity')]
+    private Collection $images;
+
     /**
      * @var Collection<int, User>
      */
@@ -63,6 +67,7 @@ class Event
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,6 +214,28 @@ class Event
         return $this;
     }
 
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setEventEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): static
+    {
+        $this->images->removeElement($image);
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, User>
      */
@@ -231,5 +258,30 @@ class Event
         $this->users->removeElement($user);
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        $imagesArray = [];
+        foreach ($this->getImages() as $image) {
+            $imagesArray[] = $image->toArray();
+        }
+
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'category' => $this->getCategorieEntity()?->toArray(),
+            'images' => $imagesArray,
+            'startingDate' => $this->getStartingDate()?->format('Y-m-d'),
+            'endingDate' => $this->getEndingDate()?->format('Y-m-d'),
+            'slug' => $this->getSlug(),
+            'websiteUrl' => $this->getWebsiteUrl(),
+            'capacity' => $this->getCapacity(),
+            'address' => $this->getAddress(),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s'),
+        ];
     }
 }

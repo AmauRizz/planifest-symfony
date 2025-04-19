@@ -29,7 +29,7 @@ class Image
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?User $userEntity = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'images')]
     private ?Event $eventEntity = null;
 
     public function getId(): ?int
@@ -102,5 +102,16 @@ class Image
         $this->eventEntity = $eventEntity;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'slug' => $this->getSlug(),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s'),
+        ];
     }
 }
