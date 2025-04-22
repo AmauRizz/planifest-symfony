@@ -41,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Role $roleEntity = null;
 
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'userEntity', cascade: ['persist', 'remove'])]
+    private Collection $images;
+
     /**
      * @var Collection<int, Event>
      */
@@ -50,6 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +167,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setUserEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getUserEntity() === $this) {
+                $image->setUserEntity(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -184,14 +214,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function toArray(): array
     {
+        $imagesArray = [];
+        $images = $this->getImages();
+        if (is_iterable($images)) {
+            foreach ($images as $image) {
+                $imagesArray[] = $image?->toArray();
+            }
+        }
+
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'email' => $this->getEmail(),
-            'role' => $this->getRoleEntity()?->toArray(),
-            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
-            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s'),
+            'role' => method_exists($this->getRoleEntity(), 'toArray') ? $this->getRoleEntity()?->toArray() : null,
+            'images' => $imagesArray,
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }

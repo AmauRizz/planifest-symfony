@@ -263,8 +263,11 @@ class Event
     public function toArray(): array
     {
         $imagesArray = [];
-        foreach ($this->getImages() as $image) {
-            $imagesArray[] = $image->toArray();
+        $images = $this->getImages();
+        if (is_iterable($images)) {
+            foreach ($images as $image) {
+                $imagesArray[] = $image?->toArray();
+            }
         }
 
         return [
@@ -279,9 +282,9 @@ class Event
             'websiteUrl' => $this->getWebsiteUrl(),
             'capacity' => $this->getCapacity(),
             'address' => $this->getAddress(),
-            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
-            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }

@@ -73,8 +73,8 @@ class Role
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }

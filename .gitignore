@@ -40,8 +40,6 @@ composer.lock
 # Docker-related (si tu utilises docker-compose)
 .docker/
 docker-compose.override.yml
-/compose.override.yaml
-/compose.yaml
 
 # Auto-generated Symfony route/URL matcher/dumper
 /src/Kernel.php

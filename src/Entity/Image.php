@@ -109,9 +109,9 @@ class Image
         return [
             'id' => $this->getId(),
             'slug' => $this->getSlug(),
-            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
-            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
+            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }
