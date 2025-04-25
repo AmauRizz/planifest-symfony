@@ -3,55 +3,58 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Service\ApiErrorHandler;
+use App\Service\ApiSuccessHandler;
+use App\Service\ApiValidationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ApiUserController extends AbstractController
 {
-    #[Route('/api/users/{id}', name: 'api_user_by_id', methods: ['GET'])]
-    public function getUserById($id, UserRepository $userRepository): JsonResponse
+    #[Route('/api/users/{id}', name: 'api_get_user_by_id', methods: ['GET'])]
+    public function getUserById($id, UserRepository $userRepository, ApiErrorHandler $errorHandler, ApiSuccessHandler $successHandler, ApiValidationUtils $validationUtils): JsonResponse
     {
-        if (!ctype_digit((string)$id) || (int)$id <= 0) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'INVALID_ID',
-                    'message' => 'The user ID must be a positive integer.',
-                    'hint' => 'Make sure the ID is a positive whole number (e.g., 1, 2, 3...).',
-                ]
-            ], 400);
+        if (!$validationUtils->isValidId($id)) {
+            return $errorHandler->handleBadRequest($id);
         }
 
         try {
             $user = $userRepository->find($id);
         } catch (\Exception $e) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'INTERNAL_SERVER_ERROR',
-                    'message' => 'An unexpected error occurred.',
-                    'hint' => 'Try again later or contact support.',
-                    'debug' => $e->getMessage(),
-                ]
-            ], 500);
+            return $errorHandler->handleInternalServerError($e);
         }
 
         if (!$user) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'RESOURCE_NOT_FOUND',
-                    'message' => 'User not found.',
-                    'hint' => 'Check if the user ID is correct.',
-                ]
-            ], 404);
+            return $errorHandler->handleNotFound('user');
         }
 
-        return $this->json([
-            'success' => true,
-            'message' => 'User retrieved successfully.',
-            'data' => $user->toArray(),
-        ], 200);
+        $data = $user->toArray();
+
+        return $successHandler->handleSuccess('user', $data);
+    }
+
+    #[Route('/api/users', name: 'api_create_user', methods: ['POST'])]
+    public function createUser(ApiErrorHandler $errorHandler): JsonResponse
+    {
+        return $errorHandler->handleNotImplemented('createUser');
+    }
+
+    #[Route('/api/users/{id}', name: 'api_update_user', methods: ['PUT'])]
+    public function updateUser($id ,ApiErrorHandler $errorHandler): JsonResponse
+    {
+        return $errorHandler->handleNotImplemented('updateUser');
+    }
+
+    #[Route('/api/users/{id}', name: 'api_delete_user', methods: ['DELETE'])]
+    public function deleteUser($id ,ApiErrorHandler $errorHandler): JsonResponse
+    {
+        return $errorHandler->handleNotImplemented('deleteUser');
+    }
+
+    #[Route('/api/users/{id}', name: 'api_partial_update_user', methods: ['PATCH'])]
+    public function partialUpdateUser($id, ApiErrorHandler $errorHandler): JsonResponse
+    {
+        return $errorHandler->handleNotImplemented('partialUpdateUser');
     }
 }

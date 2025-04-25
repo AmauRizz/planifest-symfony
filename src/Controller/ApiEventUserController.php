@@ -3,72 +3,52 @@
 namespace App\Controller;
 
 use App\Repository\EventRepository;
-use App\Repository\ImageRepository;
+use App\Service\ApiErrorHandler;
+use App\Service\ApiSuccessHandler;
+use App\Service\ApiValidationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ApiEventUserController extends AbstractController
 {
-    #[Route('/api/events/{id}/users', name: 'api_users_by_event_id', methods: ['GET'])]
-    public function getUsersByEventId($id, EventRepository $eventRepository, ImageRepository $imageRepository): JsonResponse
+    #[Route('/api/events/{id}/users', name: 'api_get_users_by_event_id', methods: ['GET'])]
+    public function getUsersByEventId($id, EventRepository $eventRepository, ApiErrorHandler $errorHandler, ApiSuccessHandler $successHandler, ApiValidationUtils $validationUtils): JsonResponse
     {
-        if (!ctype_digit((string)$id) || (int)$id <= 0) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'INVALID_ID',
-                    'message' => 'The event ID must be a positive integer.',
-                    'hint' => 'Make sure the ID is a positive whole number (e.g., 1, 2, 3...).',
-                ]
-            ], 400);
+        if (!$validationUtils->isValidId($id)) {
+            return $errorHandler->handleBadRequest($id);
         }
 
         try {
             $event = $eventRepository->find($id);
         } catch (\Exception $e) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'INTERNAL_SERVER_ERROR',
-                    'message' => 'An unexpected error occurred.',
-                    'hint' => 'Try again later or contact support.',
-                    'debug' => $e->getMessage(),
-                ]
-            ], 500);
+            return $errorHandler->handleInternalServerError($e);
         }
 
         if (!$event) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'RESOURCE_NOT_FOUND',
-                    'message' => 'Event not found.',
-                    'hint' => 'Check if the event ID is correct.',
-                ]
-            ], 404);
+            return $errorHandler->handleNotFound('event');
         }
 
         try {
             $users = $event->getUsers()->toArray();
         } catch (\Exception $e) {
-            return $this->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'INTERNAL_SERVER_ERROR',
-                    'message' => 'An error occurred while retrieving users.',
-                    'hint' => 'Try again later or contact support.',
-                    'debug' => $e->getMessage(),
-                ]
-            ], 500);
+            return $errorHandler->handleInternalServerError($e);
         }
 
         $data = array_map(fn($user) => $user->toArray(), $users);
 
-        return $this->json([
-            'success' => true,
-            'message' => 'Users from event retrieved successfully',
-            'data' => $data,
-        ], 200);
+        return $successHandler->handleSuccess('users', $data);
+    }
+
+    #[Route('/api/events/{eventId}/users', name: 'api_add_user_in_event', methods: ['POST'])]
+    public function addUser($eventId, ApiErrorHandler $errorHandler): JsonResponse
+    {
+        return $errorHandler->handleNotImplemented('addUser');
+    }
+
+    #[Route('/api/events/{eventId}/users/{userId}', name: 'api_remove_user_in_event', methods: ['DELETE'])]
+    public function removeUser($eventId, $userId ,ApiErrorHandler $errorHandler): JsonResponse
+    {
+        return $errorHandler->handleNotImplemented('removeUser');
     }
 }

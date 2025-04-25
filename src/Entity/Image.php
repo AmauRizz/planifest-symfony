@@ -14,17 +14,20 @@ class Image
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column]
+    private ?int $size = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?User $userEntity = null;
@@ -45,6 +48,29 @@ class Image
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }
@@ -75,11 +101,6 @@ class Image
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeImmutable
-    {
-        return $this->deletedAt;
-    }
-
     public function getUserEntity(): ?User
     {
         return $this->userEntity;
@@ -107,11 +128,11 @@ class Image
     public function toArray(): array
     {
         return [
-            'id' => $this->getId(),
             'slug' => $this->getSlug(),
+            'name' => $this->getName(),
+            'size' => $this->getSize(),
             'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
             'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
-            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }

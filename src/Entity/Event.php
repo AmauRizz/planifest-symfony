@@ -30,14 +30,8 @@ class Event
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private ?\DateTimeInterface $endingDate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $slug = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $websiteUrl = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $capacity = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
@@ -47,9 +41,6 @@ class Event
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -123,18 +114,6 @@ class Event
         return $this;
     }
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
     public function getWebsiteUrl(): ?string
     {
         return $this->websiteUrl;
@@ -143,18 +122,6 @@ class Event
     public function setWebsiteUrl(?string $websiteUrl): static
     {
         $this->websiteUrl = $websiteUrl;
-
-        return $this;
-    }
-
-    public function getCapacity(): ?int
-    {
-        return $this->capacity;
-    }
-
-    public function setCapacity(?int $capacity): static
-    {
-        $this->capacity = $capacity;
 
         return $this;
     }
@@ -195,11 +162,6 @@ class Event
         $this->updatedAt = new \DateTimeImmutable();
 
         return $this;
-    }
-
-    public function getDeletedAt(): ?\DateTimeImmutable
-    {
-        return $this->deletedAt;
     }
 
     public function getCategorieEntity(): ?Categorie
@@ -278,13 +240,10 @@ class Event
             'images' => $imagesArray,
             'startingDate' => $this->getStartingDate()?->format('Y-m-d'),
             'endingDate' => $this->getEndingDate()?->format('Y-m-d'),
-            'slug' => $this->getSlug(),
             'websiteUrl' => $this->getWebsiteUrl(),
-            'capacity' => $this->getCapacity(),
             'address' => $this->getAddress(),
             'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
             'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
-            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }

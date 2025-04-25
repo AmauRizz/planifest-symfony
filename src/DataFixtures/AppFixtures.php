@@ -20,6 +20,45 @@ class AppFixtures extends Fixture
         $this->passwordHasher = $passwordHasher;
     }
 
+    /* for prod only (go down for dev one)
+    public function load(ObjectManager $manager): void
+    {
+        // Create predefined Roles
+        $roles = ['ROLE_ADMIN', 'ROLE_USER'];
+        foreach ($roles as $roleName) {
+            $role = new Role();
+            $role->setName($roleName);
+            $manager->persist($role);
+        }
+
+        $categories = [
+            "Art",
+            "Musique",
+            "Spectacle",
+            "Cinéma",
+            "Exposition",
+            "Festival",
+            "Conférence",
+            "Atelier",
+            "Rencontre",
+            "Patrimoine",
+            "Célébration",
+            "Compétition",
+            "Numérique",
+            "Littérature",
+        ];
+        foreach ($categories as $categoryName) {
+            $category = new Categorie();
+            $category->setName($categoryName);
+            $manager->persist($category);
+        }
+
+        $manager->flush();
+    }
+    */
+
+    /* for dev only
+    */
     public function load(ObjectManager $manager): void
     {
         $roles = [];
@@ -62,9 +101,7 @@ class AppFixtures extends Fixture
             $event->setDescription('Description of Event ' . $i);
             $event->setStartingDate(new \DateTime());
             $event->setEndingDate(new \DateTime('+1 day'));
-            $event->setSlug('event-' . $i);
             $event->setWebsiteUrl('http://example.com/event-' . $i);
-            $event->setCapacity('15');
             $event->setAddress($i . 'Rue de l\'exemple EXEMPLE Exemple');
             $event->setCategorieEntity($categories[array_rand($categories)]);
             $events[] = $event;
@@ -72,22 +109,37 @@ class AppFixtures extends Fixture
         }
 
         // Create Images
-        for ($i = 0; $i < 20; $i++ )  {
-            if (random_int(0, 2) === 0) {
-                $R_event = $events[array_rand($events)];
-                for ($j = 0; $j < 3; $j++) {
-                    $image = new Image();
-                    $image->setSlug('image-' . uniqid());
-                    $image->setEventEntity($R_event);
-                    $images[] = $image;
-                    $manager->persist($image);
-                }
+        for ($i = 0; $i < 5; $i++ )  {
+            for ($j = 0; $j < 3; $j++) {
+                $image = new Image();
+                $image->setSlug('image-' . uniqid() . '.png');
+                $image->setName('image ' . $i);
+                $image->setSize(rand(100, 1000));
+                $image->setEventEntity($events[$i]);
+                $images[] = $image;
+                $manager->persist($image);
             }
+        }
+
+        for ($i = 0; $i < 20; $i++ )  {
+            $user = $events[array_rand($events)];
+
+            $image = new Image();
+            $image->setSlug('image-' . uniqid() . '.png');
+            $image->setName('image ' . $i);
+            $image->setSize(rand(100, 1000));
+            $image->setUserEntity($users[$i]);
+            $images[] = $image;
+            $manager->persist($image);
         }
 
         // Create User-Event relationships
         foreach ($events as $event) {
-            $event->addUser($users[array_rand($users)]);
+            foreach ($users as $user) {
+                if (rand(0, 1) == 0) {
+                    $event->addUser($user);
+                }
+            }
         }
 
         $manager->flush();

@@ -34,9 +34,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $deletedAt = null;
-
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Role $roleEntity = null;
@@ -121,11 +118,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->updatedAt = new \DateTimeImmutable();
 
         return $this;
-    }
-
-    public function getDeletedAt(): ?\DateTimeImmutable
-    {
-        return $this->deletedAt;
     }
 
     public function getRoleEntity(): ?Role
@@ -230,7 +222,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'images' => $imagesArray,
             'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
             'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
-            'deletedAt' => $this->getDeletedAt()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 }
