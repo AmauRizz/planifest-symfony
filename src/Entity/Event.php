@@ -44,7 +44,7 @@ class Event
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Categorie $categorieEntity = null;
+    private ?Category $category = null;
 
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'eventEntity')]
     private Collection $images;
@@ -54,6 +54,10 @@ class Event
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
+
+    #[ORM\ManyToOne(inversedBy: 'eventsOwned')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
 
     public function __construct()
     {
@@ -164,14 +168,14 @@ class Event
         return $this;
     }
 
-    public function getCategorieEntity(): ?Categorie
+    public function getCategory(): ?Category
     {
-        return $this->categorieEntity;
+        return $this->category;
     }
 
-    public function setCategorieEntity(?Categorie $categorieEntity): static
+    public function setCategory(?Category $category): static
     {
-        $this->categorieEntity = $categorieEntity;
+        $this->category = $category;
 
         return $this;
     }
@@ -222,6 +226,18 @@ class Event
         return $this;
     }
 
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         $imagesArray = [];
@@ -236,7 +252,8 @@ class Event
             'id' => $this->getId(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
-            'category' => $this->getCategorieEntity()?->toArray(),
+            'category' => $this->getCategory()?->toArray(),
+            'author' => $this->getAuthor()?->toArray(),
             'images' => $imagesArray,
             'startingDate' => $this->getStartingDate()?->format('Y-m-d'),
             'endingDate' => $this->getEndingDate()?->format('Y-m-d'),

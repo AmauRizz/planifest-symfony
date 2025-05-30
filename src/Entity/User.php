@@ -47,10 +47,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users')]
     private Collection $events;
 
+    /**
+     * @var Collection<int, Event>
+     */
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'author')]
+    private Collection $eventsOwned;
+
+    /**
+     * @var Collection<int, Image>
+     */
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'author')]
+    private Collection $imagesOwned;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->eventsOwned = new ArrayCollection();
+        $this->imagesOwned = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -204,6 +218,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEventsOwned(): Collection
+    {
+        return $this->eventsOwned;
+    }
+
+    public function addEventsOwned(Event $eventsOwned): static
+    {
+        if (!$this->eventsOwned->contains($eventsOwned)) {
+            $this->eventsOwned->add($eventsOwned);
+            $eventsOwned->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventsOwned(Event $eventsOwned): static
+    {
+        if ($this->eventsOwned->removeElement($eventsOwned)) {
+            // set the owning side to null (unless already changed)
+            if ($eventsOwned->getAuthor() === $this) {
+                $eventsOwned->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getImagesOwned(): Collection
+    {
+        return $this->imagesOwned;
+    }
+
+    public function addImagesOwned(Image $imagesOwned): static
+    {
+        if (!$this->imagesOwned->contains($imagesOwned)) {
+            $this->imagesOwned->add($imagesOwned);
+            $imagesOwned->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImagesOwned(Image $imagesOwned): static
+    {
+        if ($this->imagesOwned->removeElement($imagesOwned)) {
+            // set the owning side to null (unless already changed)
+            if ($imagesOwned->getAuthor() === $this) {
+                $imagesOwned->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         $imagesArray = [];
@@ -218,7 +292,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'id' => $this->getId(),
             'name' => $this->getName(),
             'email' => $this->getEmail(),
-            'role' => method_exists($this->getRoleEntity(), 'toArray') ? $this->getRoleEntity()?->toArray() : null,
+            'role' => $this->getRoleEntity()?->toArray(),
             'images' => $imagesArray,
             'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
             'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,

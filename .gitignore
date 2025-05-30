@@ -1,4 +1,4 @@
-# Symfony-specific
+# Symfony
 /var/
 /vendor/
 /.env
@@ -11,45 +11,41 @@
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 
-# Logs and cache
+# Logs & cache
 /var/log/
 /var/cache/
 /var/data/
 
-# PhpStorm / JetBrains IDE
+# IDEs
 .idea/
+.phpstorm.meta.php
 
-# Build artifacts
+# OS
+.DS_Store
+Thumbs.db
+
+# PHPUnit / coverage
+.phpunit.result.cache
+/tests/output/
+/coverage/
+
+# Node / front
 /node_modules/
 /dist/
 /build/
 /public/build/
 
-# OS-specific
-.DS_Store
-Thumbs.db
-
-# PHPUnit / Coverage
-.phpunit.result.cache
-/tests/output/
-/coverage/
-
-# Composer
-composer.lock
-
-# Docker-related (si tu utilises docker-compose)
+# Docker
 .docker/
 docker-compose.override.yml
 
-# Auto-generated Symfony route/URL matcher/dumper
-/src/Kernel.php
-
-# IDE helper (Laravel-like devs, via Symfony plugin)
-.phpstorm.meta.php
-
-# Ignore translations generated automatically (si applicable)
-/translations/*.xlf
-
-# Nginx / Apache config (optionnel)
+# Web server
 .nginx/
 .htaccess
+
+# Ignorer uniquement les traductions générées si nécessaire
+# /translations/messages.*.xlf
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

@@ -29,6 +29,10 @@ class Image
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'imagesOwned')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
+
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?User $userEntity = null;
 
@@ -125,12 +129,25 @@ class Image
         return $this;
     }
 
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
-            'slug' => $this->getSlug(),
             'name' => $this->getName(),
+            'slug' => $this->getSlug(),
             'size' => $this->getSize(),
+            'author' => $this->getAuthor()?->getId(),
             'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s') ?? null,
             'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
         ];

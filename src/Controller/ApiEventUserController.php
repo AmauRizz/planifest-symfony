@@ -10,45 +10,56 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class ApiEventUserController extends AbstractController
+class ApiEventUserController extends AbstractController
 {
-    #[Route('/api/events/{id}/users', name: 'api_get_users_by_event_id', methods: ['GET'])]
-    public function getUsersByEventId($id, EventRepository $eventRepository, ApiErrorHandler $errorHandler, ApiSuccessHandler $successHandler, ApiValidationUtils $validationUtils): JsonResponse
+    private ApiErrorHandler $errorHandler;
+    private ApiSuccessHandler $successHandler;
+    private ApiValidationUtils $validationUtils;
+
+    public function __construct(ApiErrorHandler $errorHandler, ApiSuccessHandler $successHandler, ApiValidationUtils $validationUtils)
     {
-        if (!$validationUtils->isValidId($id)) {
-            return $errorHandler->handleBadRequest($id);
+        $this->errorHandler = $errorHandler;
+        $this->successHandler = $successHandler;
+        $this->validationUtils = $validationUtils;
+    }
+
+    #[Route('/api/events/{id}/users', name: 'api_get_users_by_event_id', methods: ['GET'])]
+    public function getUsersByEventId($id, EventRepository $eventRepository): JsonResponse
+    {
+        if (!$this->validationUtils->isValidId($id)) {
+            return $this->errorHandler->handleBadRequest($id);
         }
 
         try {
             $event = $eventRepository->find($id);
         } catch (\Exception $e) {
-            return $errorHandler->handleInternalServerError($e);
+            return $this->errorHandler->handleInternalServerError($e);
         }
 
         if (!$event) {
-            return $errorHandler->handleNotFound('event');
+            return $this->errorHandler->handleNotFound('event');
         }
 
         try {
             $users = $event->getUsers()->toArray();
         } catch (\Exception $e) {
-            return $errorHandler->handleInternalServerError($e);
+            return $this->errorHandler->handleInternalServerError($e);
         }
 
         $data = array_map(fn($user) => $user->toArray(), $users);
 
-        return $successHandler->handleSuccess('users', $data);
+        return $this->successHandler->handleSuccess('users', $data);
     }
 
     #[Route('/api/events/{eventId}/users', name: 'api_add_user_in_event', methods: ['POST'])]
-    public function addUser($eventId, ApiErrorHandler $errorHandler): JsonResponse
+    public function addUserInEvent($eventId): JsonResponse
     {
-        return $errorHandler->handleNotImplemented('addUser');
+        return $this->errorHandler->handleNotImplemented('addUser');
     }
 
     #[Route('/api/events/{eventId}/users/{userId}', name: 'api_remove_user_in_event', methods: ['DELETE'])]
-    public function removeUser($eventId, $userId ,ApiErrorHandler $errorHandler): JsonResponse
+    public function removeUserInEvent($eventId, $userId): JsonResponse
     {
-        return $errorHandler->handleNotImplemented('removeUser');
+        return $this->errorHandler->handleNotImplemented('removeUser');
     }
 }

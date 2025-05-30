@@ -98,6 +98,7 @@ class ApiErrorHandler
                 'code' => 'INTERNAL_SERVER_ERROR',
                 'message' => 'An unexpected server error occurred.',
                 'hint' => 'Try again later or contact support.',
+                'debug' => $e->getMessage()
             ]
         ], 500);
     }

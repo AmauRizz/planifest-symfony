@@ -26,10 +26,6 @@ class ApiSuccessHandler
 
     public function handleNoContent(string $resource): JsonResponse // httpCode: 204
     {
-        return new JsonResponse([
-            'success' => true,
-            'message' => sprintf('%s processed successfully, but no content to return.', ucfirst($resource)),
-            'data' => null,
-        ], 204);
+        return new JsonResponse(null, 204);
     }
 }
