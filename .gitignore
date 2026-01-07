@@ -1,0 +1,51 @@
+# Symfony
+/var/
+/vendor/
+/.env
+/.env.local
+/.env.dev
+/.env.test
+/.env.*.local
+/.env.local.php
+/config/secrets/*/secrets.*.key
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+
+# Logs & cache
+/var/log/
+/var/cache/
+/var/data/
+
+# IDEs
+.idea/
+.phpstorm.meta.php
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PHPUnit / coverage
+.phpunit.result.cache
+/tests/output/
+/coverage/
+
+# Node / front
+/node_modules/
+/dist/
+/build/
+/public/build/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Web server
+.nginx/
+.htaccess
+
+# Ignorer uniquement les traductions générées si nécessaire
+# /translations/messages.*.xlf
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

@@ -1,0 +1,51 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern: ^/api/auth/token
+            stateless: true
+            json_login:
+                check_path: /api/auth/token
+                username_path: email
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+
+        main:
+            lazy: true
+            provider: app_user_provider
+            # Ce firewall est inutile ici, mais requis pour éviter les erreurs côté dev/test
+
+    access_control:
+        # Ordre important !
+        - { path: ^/api/users/me, roles: ROLE_0 }
+        - { path: ^/api/users$, roles: PUBLIC_ACCESS }         # POST /api/users (register)
+        - { path: ^/api/auth/token, roles: PUBLIC_ACCESS }     # POST /api/auth/token (login)
+
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10
