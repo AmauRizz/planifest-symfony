@@ -53,23 +53,36 @@ Planifest enables users to:
 ## 🚀 Installation & Development
 
 ### Installation
+
+Clone the repository
 ```bash
-# Clone the repository
 git clone https://github.com/AmauRizz/planifest.git
 cd planifest
+```
 
-
-# Install PHP dependencies
+Start Symfony server
+```bash
+cd symfony
 composer install
-
-# Start Symfony server
 symfony server:start
+```
 
-cd
-
-# Install Node dependencies
+Start Vite server
+```bash
+cd ../vue
 npm install
-
-# Start frontend dev server (Vue)
 npm run dev
 ```
+The website will be available at [http://localhost:5173](http://localhost:5173)
+
+## 🖥 Deployment
+
+
+## 📫 Contact
+- Portfolio: [Freelance web developer](https://www.amaurymulcey.fr/)
+- Email: amaury.mulcey.pro@gmail.com
+- GitHub: [AmauRizz](https://github.com/AmauRizz)
+- LinkedIn: [Amaury Mulcey](https://www.linkedin.com/in/amaurymulcey/)
+
+## 📝 License
+This project is licensed under the ```Apache 2.0``` License. See LICENSE for details.
