@@ -1,7 +1,26 @@
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+/var/log/
+/tests/output/
+.phpunit.result.cache
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+build/
+public/build/
+*.local
+
 # Symfony
 /var/
-/vendor/
-/.env
+.env
 /.env.local
 /.env.dev
 /.env.test
@@ -10,42 +29,34 @@
 /config/secrets/*/secrets.*.key
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-
-# Logs & cache
-/var/log/
 /var/cache/
 /var/data/
 
-# IDEs
+# JWT keys
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+# IDEs / Editors
+.vscode/*
+!.vscode/extensions.json
 .idea/
 .phpstorm.meta.php
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # OS
 .DS_Store
 Thumbs.db
 
-# PHPUnit / coverage
-.phpunit.result.cache
-/tests/output/
-/coverage/
-
-# Node / front
-/node_modules/
-/dist/
-/build/
-/public/build/
-
-# Docker
+# Web server / Docker
 .docker/
 docker-compose.override.yml
-
-# Web server
 .nginx/
 .htaccess
 
-# Ignorer uniquement les traductions générées si nécessaire
-# /translations/messages.*.xlf
-
-###> lexik/jwt-authentication-bundle ###
-/config/jwt/*.pem
-###< lexik/jwt-authentication-bundle ###
+# Testing / Coverage
+/coverage/
